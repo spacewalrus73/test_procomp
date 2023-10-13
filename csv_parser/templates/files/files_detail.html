@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1>Соритровка и фильтрация файла</h1>
+    <h3>{{ object.file_name }}</h3>
+    <div class="container">
+        <form method="post" action='{% url "show_frame" object.pk %}'>
+            {% csrf_token %}
+            <label for="SelectColumns" class="form-label">Отобразить только:</label>
+            <select class="form-select" aria-label="Default select example" multiple id="SelectColumns" name="select">
+                {% for column in columns %}
+                <option value="{{ column }}">{{ column }}</option>
+                {% endfor %}
+            </select>
+            </br>
+            <label for="SelectSortColumns" class="form-label">Сортировать по:</label>
+            <select class="form-select" aria-label="Default select example" multiple id="SelectSortColumns" name="sort_values">
+                {% for column in columns %}
+                <option value="{{ column }}">{{ column }}</option>
+                {% endfor %}
+            </select>
+            <label for="flexCheckDefault1" class="form-label">Направление сортировки:</label>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="flexCheckDefault1" value="False" name="sort">
+                <label class="form-check-label" for="flexCheckDefault1">
+                    DESC
+                </label>
+            </div>
+            <button type="submit" class="btn btn-primary">Показать</button>
+        </form>
+    </div>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+
+{% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li class="{{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+    <div class="container">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+          <div class="mb-3">
+            <label for="formFileMultiple" class="form-label">Choose files</label>
+            <input type="file" class="form-control" id="formFileMultiple" name="file" multiple accept="text/csv">
+          </div>
+          <button type="Submit" class="btn btn-primary">Загрузить</button>
+        </form>
+    </div>
+
+{% endblock %}
