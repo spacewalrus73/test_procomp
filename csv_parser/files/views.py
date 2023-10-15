@@ -64,14 +64,22 @@ class FileDetailView(DetailView):
 
 
 def show_data(request, pk):
-    """Show all data from file or filtered data"""
+    """Show all/filtered data from file"""
     if request.POST:
         columns_to_show = request.POST.getlist('select')
         columns_to_sort = request.POST.getlist('sort_values')
-        ascending = bool(request.POST.getlist('sort'))
-        print(ascending)
-        print(type(ascending))
-        frame = df_to_html(df=filter_data(pk, columns_to_show))
+        is_ascending = bool(request.POST.get('is_ascending'))
+        is_index = bool(request.POST.get('is_index'))
+        is_head = request.POST.get('is_head')
+        number_of_rows = int(request.POST.get("rows_to_show"))
+        filtered_data = filter_data(pk,
+                                    columns_to_show,
+                                    columns_to_sort,
+                                    is_ascending,
+                                    is_index,
+                                    is_head,
+                                    number_of_rows)
+        frame = df_to_html(df=filtered_data)
         with open('csv_parser/templates/files/frames.html', 'w') as f:
             f.write(frame)
 
