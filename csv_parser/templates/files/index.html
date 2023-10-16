@@ -4,21 +4,27 @@
     <table class="table table-hover">
       <thead>
         <tr>
-          <th scope="col">#</th>
+          <th scope="col">ID</th>
           <th scope="col">File name</th>
           <th scope="col">Columns</th>
           <th scope="col">Rows</th>
           <th scope="col">Columns list</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
-            {% for file in files %}
+            {% for file in files_info %}
             <tr>
-                <th scope="row">{{ forloop.counter }}</th>
-                <td>{{ file.name }}</td>
+                <th scope="row">{{ file.file_id }}</th>
+                <td>
+                    <a href="{% url 'file_details' pk=file.file_id %}">{{ file.name }}</a>
+                </td>
                 <td>{{ file.columns_count }}</td>
-                <td>{{file.rows_count}}</td>
+                <td>{{ file.rows_count }}</td>
                 <td>{{ file.columns }}</td>
+                <td>
+                    <a href="{% url 'delete_file' pk=file.file_id %}">Delete</a>
+                </td>
             </tr>
             {% endfor %}
       </tbody>
