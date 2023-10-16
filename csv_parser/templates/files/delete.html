@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+
+  <h1 class="my-4">Delete file</h1>
+<p>Are you sure, you want to delete {{ file.file_name }}?</p>
+<form method="post" action="{% url 'delete_file' pk=file.id %}">
+  {% csrf_token %}
+  <button type="submit" class="btn btn-danger">Delete</button
+</form>
+
+{% endblock %}
