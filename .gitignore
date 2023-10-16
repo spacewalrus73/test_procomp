@@ -1,4 +1,5 @@
 db.sqlite3
+/templates/files/frames.html
 __pycache__
 dist/
 .idea/
