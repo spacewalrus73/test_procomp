@@ -1,15 +1,6 @@
 import pandas as pd
-from csv_parser.files.models import Files
-
-
-def save(file) -> None:
-    """
-    Save file to db
-    """
-    Files.objects.create(
-        file_name=file.name,
-        file=file
-    )
+from django.conf import settings
+from .db_functions import get_all_files, get_file_by_id, get_filename_by_id
 
 
 def read_csv(file):
@@ -24,7 +15,7 @@ def get_column_names_and_rows(file):
 
 
 def get_files_info():
-    all_files = Files.objects.all()
+    all_files = get_all_files()
 
     data_files = []
 
@@ -36,29 +27,35 @@ def get_files_info():
             "columns": column_names,
             "columns_count": len(column_names),
             "rows_count": rows_index,
+            "file_id": obj.id,
         })
 
     return data_files
 
 
-def df_to_html(pk: int = None, df=None):
-    if pk:
-        file_object = Files.objects.get(id=pk)
-        file_object_df = read_csv(file_object.file)
-        return file_object_df.to_html()
-    else:
-        return df.to_html()
+def df_to_html(df, pk):
+    frame = df.to_html()
+    with open('csv_parser/templates/files/frames.html', 'w') as f:
+        f.write(f"<a href='/files/{pk}/download'>Скачать</a></br>" + frame)
+    return
 
 
-def filter_data(pk: int,
-                columns_to_show: list[str],
-                columns_to_sort: list[str],
-                is_ascending: bool,
-                is_index: bool,
-                is_head: bool,
-                num_of_rows: int):
+def df_to_csv(df, pk):
+    file_name = get_filename_by_id(pk)
+    return df.to_csv(f'{settings.MEDIA_ROOT}/downloadedfiles/{file_name}')
 
-    file_object = Files.objects.get(id=pk)
+
+def filter_data(
+        pk: int,
+        columns_to_show: list[str],
+        columns_to_sort: list[str],
+        is_ascending: bool,
+        is_index: bool,
+        is_head: bool,
+        num_of_rows: int
+):
+
+    file_object = get_file_by_id(pk)
     file_object_df = read_csv(file_object.file)
     filtered_data = sort_and_filter(file_object_df,
                                     columns_to_show,
@@ -70,13 +67,15 @@ def filter_data(pk: int,
     return filtered_data
 
 
-def sort_and_filter(df,
-                    cols_to_show=None,
-                    cols_to_sort=None,
-                    is_ascending=False,
-                    is_index=False,
-                    is_head=None,
-                    num_of_rows=None):
+def sort_and_filter(
+        df,
+        cols_to_show=None,
+        cols_to_sort=None,
+        is_ascending=False,
+        is_index=False,
+        is_head=None,
+        num_of_rows=None
+):
 
     if cols_to_sort:
         modified_df = df.sort_values(by=cols_to_sort,
